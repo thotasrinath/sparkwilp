@@ -1,18 +1,16 @@
 package org.wilp.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Created by thota on 2/27/17.
- *
- *
- *
- CREATE TABLE orders (
- order_id serial PRIMARY KEY,
- order_date date
- );
-
+ * <p>
+ * <p>
+ * <p>
+ * CREATE TABLE orders (
+ * order_id serial PRIMARY KEY,
+ * order_date date
+ * );
  */
 public class OrdersVO implements Serializable {
 
