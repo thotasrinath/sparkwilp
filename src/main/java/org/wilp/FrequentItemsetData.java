@@ -4,12 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * This class holds the result information of a data-mining task.
- *
- * @author Rodion "rodde" Efremov
- * @version 1.6 (Sep 14, 2015)
- */
+
 public class FrequentItemsetData<I> {
 
     private final List<Set<I>> frequentItemsetList;

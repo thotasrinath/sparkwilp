@@ -2,24 +2,10 @@ package org.wilp;
 
 import java.util.*;
 
-/**
- * This class implements the 
- * <a href="https://en.wikipedia.org/wiki/Apriori_algorithm">Apriori algorithm</a> 
- * for frequent itemset generation.
- *
- * @author Rodion "rodde" Efremov
- * @version 1.6 (Sep 14, 2015)
- * @param <I> the actual item type.
- */
+
 public class AprioriFrequentItemsetGenerator<I> {
 
-    /**
-     * Generates the frequent itemset data.
-     *
-     * @param transactionList the list of transactions to mine.
-     * @param minimumSupport  the minimum support.
-     * @return the object describing the result of this task.
-     */
+
     public FrequentItemsetData<I> generate(List<Set<I>> transactionList,
                                            double minimumSupport) {
         Objects.requireNonNull(transactionList, "The itemset list is empty.");
@@ -77,14 +63,7 @@ public class AprioriFrequentItemsetGenerator<I> {
                 transactionList.size());
     }
 
-    /**
-     * This method simply concatenates all the lists of frequent itemsets into
-     * one list.
-     *
-     * @param map the map mapping an itemset size to the list of frequent
-     *            itemsets of that size.
-     * @return the list of all frequent itemsets.
-     */
+
     private List<Set<I>>
     extractFrequentItemsets(Map<Integer, List<Set<I>>> map) {
         List<Set<I>> ret = new ArrayList<>();
@@ -96,16 +75,7 @@ public class AprioriFrequentItemsetGenerator<I> {
         return ret;
     }
 
-    /**
-     * This method gathers all the frequent candidate itemsets into a single
-     * list.
-     *
-     * @param candidateList   the list of candidate itemsets.
-     * @param supportCountMap the map mapping each itemset to its support count.
-     * @param minimumSupport  the minimum support.
-     * @param transactions    the total number of transactions.
-     * @return a list of frequent itemset candidates.
-     */
+
     private List<Set<I>> getNextItemsets(List<Set<I>> candidateList,
                                          Map<Set<I>, Integer> supportCountMap,
                                          double minimumSupport,
@@ -126,15 +96,7 @@ public class AprioriFrequentItemsetGenerator<I> {
         return ret;
     }
 
-    /**
-     * Computes the list of itemsets that are all subsets of
-     * {@code transaction}.
-     *
-     * @param candidateList the list of candidate itemsets.
-     * @param transaction   the transaction to test against.
-     * @return the list of itemsets that are subsets of {@code transaction}
-     * itemset.
-     */
+
     private List<Set<I>> subset(List<Set<I>> candidateList,
                                 Set<I> transaction) {
         List<Set<I>> ret = new ArrayList<>(candidateList.size());
@@ -148,13 +110,7 @@ public class AprioriFrequentItemsetGenerator<I> {
         return ret;
     }
 
-    /**
-     * Generates the next candidates. This is so called F_(k - 1) x F_(k - 1)
-     * method.
-     *
-     * @param itemsetList the list of source itemsets, each of size <b>k</b>.
-     * @return the list of candidates each of size <b>k + 1</b>.
-     */
+
     private List<Set<I>> generateCandidates(List<Set<I>> itemsetList) {
         List<List<I>> list = new ArrayList<>(itemsetList.size());
 
@@ -181,14 +137,7 @@ public class AprioriFrequentItemsetGenerator<I> {
         return ret;
     }
 
-    /**
-     * Attempts the actual construction of the next itemset candidate.
-     *
-     * @param itemset1 the list of elements in the first itemset.
-     * @param itemset2 the list of elements in the second itemset.
-     * @return a merged itemset candidate or {@code null} if one cannot be
-     * constructed from the input itemsets.
-     */
+
     private Set<I> tryMergeItemsets(List<I> itemset1, List<I> itemset2) {
         int length = itemset1.size();
 
@@ -222,15 +171,7 @@ public class AprioriFrequentItemsetGenerator<I> {
 
     };
 
-    /**
-     * Computes the frequent itemsets of size 1.
-     *
-     * @param itemsetList     the entire database of transactions.
-     * @param supportCountMap the support count map to which to write the
-     *                        support counts of each item.
-     * @param minimumSupport  the minimum support.
-     * @return the list of frequent one-itemsets.
-     */
+    
     private List<Set<I>> findFrequentItems(List<Set<I>> itemsetList,
                                            Map<Set<I>, Integer> supportCountMap,
                                            double minimumSupport) {
