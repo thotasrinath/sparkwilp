@@ -9,16 +9,13 @@ import org.apache.nifi.spark.NiFiReceiver;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.wilp.vo.OrderProductsVO;
-import scala.Tuple2;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -53,11 +50,9 @@ public class StreamOrders {
                 }
             });
 
-           // text.print();
+            // text.print();
 
             JavaDStream windowedText = text.window(org.apache.spark.streaming.Durations.minutes(3));
-
-
 
 
             JavaDStream<List<OrderProductsVO>> opDstream = windowedText.map(new Function<String, List<OrderProductsVO>>() {
@@ -75,26 +70,28 @@ public class StreamOrders {
                 }
             });
 
-            Map<Long,HashSet<String>> map = new HashMap<Long,HashSet<String>>();
-            List<Set<String>> itemsetList = new ArrayList<>();
+
 
             opDstream.foreachRDD(new VoidFunction<JavaRDD<List<OrderProductsVO>>>() {
+
+                Map<Long, HashSet<String>> map = new HashMap<Long, HashSet<String>>();
+                List<Set<String>> itemsetList = new ArrayList<Set<String>>();
+
                 @Override
                 public void call(JavaRDD<List<OrderProductsVO>> listJavaRDD) throws Exception {
 
                     List<List<OrderProductsVO>> lvo = listJavaRDD.collect();
 
-                    for (List<OrderProductsVO> opvl: lvo){
-                        for (OrderProductsVO opv : opvl){
-                            if (map.containsKey(opv.getOrder().getOrderId())){
+                    for (List<OrderProductsVO> opvl : lvo) {
+                        for (OrderProductsVO opv : opvl) {
+                            if (map.containsKey(opv.getOrder().getOrderId())) {
                                 map.get(opv.getOrder().getOrderId()).add(opv.getProduct().getProductName());
-                            }else {
+                            } else {
 
-                                HashSet<String> hs= new HashSet<String>();
+                                HashSet<String> hs = new HashSet<String>();
                                 hs.add(opv.getProduct().getProductName());
-                                map.put(opv.getOrder().getOrderId(),hs);
+                                map.put(opv.getOrder().getOrderId(), hs);
                             }
-
 
 
                         }
@@ -104,14 +101,14 @@ public class StreamOrders {
                             new AprioriFrequentItemsetGenerator<>();
 
 
-
-
-                    for (Map.Entry<Long,HashSet<String>> entry: map.entrySet()){
+                    for (Map.Entry<Long, HashSet<String>> entry : map.entrySet()) {
                         itemsetList.add(entry.getValue());
+
+                     //   System.out.print("Item Set : " + itemsetList);
                     }
 
-                    if(itemsetList.size() > 10){
-                        FrequentItemsetData<String> data = generator.generate(itemsetList, 0.1);
+                    if (itemsetList.size() > 10) {
+                        FrequentItemsetData<String> data = generator.generate(itemsetList, 0.2);
                         int i = 1;
 
                         for (Set<String> itemset : data.getFrequentItemsetList()) {
@@ -120,15 +117,13 @@ public class StreamOrders {
                                     itemset,
                                     data.getSupport(itemset));
                         }
-                    }
+                       // itemsetList = new ArrayList<Set<String>>();
 
+                    }
 
 
                 }
             });
-
-
-
 
 
             //opDstream.print();
